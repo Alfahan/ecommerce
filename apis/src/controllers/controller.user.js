@@ -35,10 +35,10 @@ exports.loginUser = async (req, res) => {
             if (originalPassword !== req.body.password) {
                 return response.Unauthorized(res, [], 'Wrong Credentials!')
             } else {
-
+                console.log(data);
                 const accessToken = jwt.sign({
-                    id: user._id,
-                    isAdmin: user.isAdmin
+                    id: data._id,
+                    isAdmin: data.isAdmin
                 }, env.Jwt_Sec, { expiresIn: "3d" })
 
                 const { password, ...others } = data._doc
@@ -49,6 +49,76 @@ exports.loginUser = async (req, res) => {
             return response.Unauthorized(res, [], 'Wrong Credentials!')
         }
 
+    } catch (err) {
+        return response.failed(res, [], err.message)
+    }
+}
+
+exports.updateUser = async (req, res) => {
+    try {
+        const findUserExist = await usersModel.findByField({ _id: req.params.id })
+
+        if(findUserExist[0]){
+            if(req.body.password) {
+                req.body.password = CryptoJS.AES.encrypt(
+                    req.body.password,
+                    env.Pass_Sec
+                ).toString
+            }
+    
+            const updatedUser = await usersModel.findByFieldAndUpdate(req.params.id, req.body)
+    
+            return response.putData(res, updatedUser, 'User Updated')
+        } else {
+            return response.dataNotFound(res, [])
+        }
+
+    } catch (err) {
+        return response.failed(res, [], err.message)
+    }
+}
+
+exports.deleteUser = async (req, res) => {
+    try { 
+        const findUserExist = await usersModel.findByField({ _id: req.params.id })
+
+        if(findUserExist[0]){
+            const deleteUser = await usersModel.findByFieldAndDelete(req.params.id)
+            return response.deleteData(res, deleteUser)
+        } else {
+            return response.dataNotFound(res, [])
+        }
+
+    } catch (err) {
+        return response.failed(res, [], err.message)
+    }
+}
+
+exports.getUser = async (req, res) => {
+    try {
+        const findUserExist = await usersModel.findByField({ _id: req.params.id })
+
+        if(findUserExist[0]){
+            const data = findUserExist[0]
+            const { password, ...others } = data._doc
+            return response.readData(res, others)
+        } else {
+            return response.dataNotFound(res, [])
+        }
+    } catch (err) {
+        return response.failed(res, [], err.message)
+    }
+}
+
+exports.getAllUser = async (req, res) => {
+    try {
+        const findUserExist = await usersModel.findByField()
+
+        if(findUserExist.length !== 0){
+            return response.readData(res, findUserExist)
+        } else {
+            return response.dataNotFound(res, [])
+        }
     } catch (err) {
         return response.failed(res, [], err.message)
     }

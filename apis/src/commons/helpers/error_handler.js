@@ -39,7 +39,6 @@ exports.putData = (
         message,
         data,
     }
-
     res.status(200).json(result)
 }
 
@@ -85,7 +84,6 @@ exports.conflictExist = async (res, data, message = 'Data Already Exist') => {
         message,
         data,
     }
-
     res.status(409).json(result)
 }
 

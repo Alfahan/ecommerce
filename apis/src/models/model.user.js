@@ -1,11 +1,11 @@
-const { User } = require('../database/schema');
+const { User } = require('../database/schema') 
 
 exports.createUser = async (payload) => {
     try {
         const result = new User(payload)
         return await result.save()
     } catch (err) {
-        throw new Error(err);
+        throw new Error(err) 
     }
 }
 
@@ -14,6 +14,26 @@ exports.findByField = async (field) => {
         const result = await User.find(field)
         return result
     } catch (err) {
-        throw new Error(err);
+        throw new Error(err) 
+    }
+}
+
+exports.findByFieldAndUpdate = async (params, payload) => {
+    try {
+        const result = await User.findByIdAndUpdate(params, {
+            $set: payload
+        }, { new: true })
+        return result
+    } catch (err) {
+        throw new Error(err)
+    }
+}
+
+exports.findByFieldAndDelete = async (field) => {
+    try {
+        const result = await User.findByIdAndDelete(params)
+        return result
+    } catch (err) {
+        throw new Error(err)
     }
 }
