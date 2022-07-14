@@ -8,3 +8,12 @@ exports.createUser = async (payload) => {
         throw new Error(err);
     }
 }
+
+exports.findByField = async (field) => {
+    try {
+        const result = await User.find(field)
+        return result
+    } catch (err) {
+        throw new Error(err);
+    }
+}

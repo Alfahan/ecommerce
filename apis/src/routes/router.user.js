@@ -5,4 +5,9 @@ exports.routesConfig = function (app) {
     app.post('/register', [
         usersController.registerUser
     ])
+
+    // Login
+    app.post('/login', [
+        usersController.loginUser
+    ])
 }
