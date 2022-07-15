@@ -3,7 +3,6 @@ const usersModel = require('../models/model.user')
 const CryptoJS = require('crypto-js')
 const env = require('../commons/helpers/env')
 const jwt = require("jsonwebtoken")
-const user = require('../database/user')
 
 exports.registerUser = async (req, res) => {
     try {
@@ -35,7 +34,6 @@ exports.loginUser = async (req, res) => {
             if (originalPassword !== req.body.password) {
                 return response.Unauthorized(res, [], 'Wrong Credentials!')
             } else {
-                console.log(data);
                 const accessToken = jwt.sign({
                     id: data._id,
                     isAdmin: data.isAdmin
@@ -119,6 +117,17 @@ exports.getAllUser = async (req, res) => {
         } else {
             return response.dataNotFound(res, [])
         }
+    } catch (err) {
+        return response.failed(res, [], err.message)
+    }
+}
+
+exports.getStats = async (req, res) => {
+    try {
+        const date = new Date()
+        const lastYear = new Date(date.setFullYear(date.getFullYear() - 1))
+        const data = await usersModel.getStatsUser(lastYear)
+        return response.readData(res, data)
     } catch (err) {
         return response.failed(res, [], err.message)
     }

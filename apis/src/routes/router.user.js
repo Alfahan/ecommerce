@@ -35,4 +35,10 @@ exports.routesConfig = function (app) {
         verify.verifyTokenAndAdmin,
         usersController.getAllUser
     ])
+
+    // Get user stats
+    app.get('/stats', [
+        verify.verifyTokenAndAdmin,
+        usersController.getStats
+    ])
 }

@@ -31,9 +31,34 @@ exports.findByFieldAndUpdate = async (params, payload) => {
 
 exports.findByFieldAndDelete = async (field) => {
     try {
-        const result = await User.findByIdAndDelete(params)
+        const result = await User.findByIdAndDelete(field)
         return result
     } catch (err) {
         throw new Error(err)
     }
 }
+
+exports.getStatsUser = async (payload) => {
+    try {
+        const result = await User.aggregate([
+            {
+                $match: { createdAt: { $gte: payload } }
+            },
+            {
+                $project: {
+                    month: { $month: "$createdAt" },
+                },
+            },
+            {
+                $group: {
+                    _id: "$month",
+                    total: { $sum: 1 },
+                },
+            }
+        ])
+        return result
+    } catch (err) {
+        throw new Error(err)
+    }
+}
+
