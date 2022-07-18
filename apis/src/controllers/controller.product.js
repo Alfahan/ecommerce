@@ -33,7 +33,7 @@ exports.deleteProduct = async (req, res) => {
         if (findProductExist[0]) {
             const deleteProduct = await productModel.findByFieldAndDelete(req.params.id)
 
-            return response.deletedata(res, deleteProduct, 'Product Deleted')
+            return response.deleteData(res, deleteProduct, 'Product Deleted')
         } else {
             return response.dataNotFound(res, [])
         }
@@ -59,20 +59,19 @@ exports.getProductId = async (req, res) => {
 
 exports.getAllProduct = async (req, res) => {
     try {
-        const Category = req.query.category ? req.query.category : null
+        const Category = req.query.category ? { categories: {
+            $in: [ req.query.category ]
+        } } : null
         
         const New = req.query.new ? {
-            sort: -1,
-            limit: 1
-        } : 
-        { 
-            sort: 1,
-            limit: null
+            sort: '-1',
+            limit: '1'
+        } : { 
+            sort: '1',
+            limit: undefined
         }
 
-        const result = await productModel.findByField({ categories: {
-            $in: [ Category ]
-        } }, New.sort, New.limit )
+        const result = await productModel.findByField( Category, New.sort, New.limit )
 
         return response.readData(res, result)
     } catch (err) {

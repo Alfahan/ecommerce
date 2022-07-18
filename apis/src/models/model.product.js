@@ -9,7 +9,7 @@ exports.createProduct = async (payload) => {
     }
 }
 
-exports.findByField = async (field, sort = null, limit = null) => {
+exports.findByField = async (field, sort, limit) => {
     try {
         const result = await Product.find(field)
             .sort(sort)
